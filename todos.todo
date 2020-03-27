@@ -1,0 +1,5 @@
+# TODO :
+    Moteur de recherche utilise l'api google
+        => Doc Api Youtube Search : https://developers.google.com/youtube/v3/docs/search/list
+    Enregistrement utilise pafy, en partant de l'URL de base https://www.youtube.com/watch?v= + le video ID récupéré via l'API
+        => Doc Pafy : https://pypi.org/project/pafy/
