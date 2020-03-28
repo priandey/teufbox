@@ -9,7 +9,8 @@ scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 
 def search_engine(keep_going, youtube, keywords):
     while keep_going:
-
+        if keywords == "exit":
+            break
         request = youtube.search().list(
             part="snippet",
             maxResults=10,
@@ -24,17 +25,18 @@ def search_engine(keep_going, youtube, keywords):
                                      channel=proposition['snippet']['channelTitle'],
                                      id=proposition['id']['videoId'])
                 response_list.append(prop)
-                print(f'{position}    -    {prop})')
+                print(f'{position}    -    {prop}')
                 position += 1
             except KeyError:
                 pass
 
-        choice = input("DL one [0 - 9] or continue search (type search) or exit (type exit) ? : ")
+        choice = input("DL one [0 - 9] or continue search (type keywords) or exit (type exit) ? : ")
 
         if choice.isnumeric():
             index = int(choice)
             try:
                 response_list[index].download()
+                keywords = input("Continue search (type keywords) or exit (type exit) ? : ")
             except IndexError:
                 print("Le chiffre doit être entre 0 et 9")
 

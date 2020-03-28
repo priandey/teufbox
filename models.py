@@ -12,7 +12,7 @@ class ExternalMusic():
         self.complete_url()
 
     def __repr__(self):
-        return f'{self.name}, from {self.channel} = {self.yt_url}'
+        return f'{self.name}, from {self.channel}'
 
     def complete_url(self):
         self.yt_url += self.id
@@ -34,12 +34,13 @@ class ExternalMusic():
 
         ydl_opts = {
             'format': 'bestaudio/best',
+            'outtmpl': 'music/%(title)s.%(ext)s',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
-            }],
-            'outtmpl': f'music/{self.name}-{self.id}',
+            },
+                {'key': 'FFmpegMetadata'}],
             'logger': MyLogger(),
             'progress_hooks': [my_hook],
         }

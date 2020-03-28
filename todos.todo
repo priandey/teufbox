@@ -3,3 +3,11 @@
         => Doc Api Youtube Search : https://developers.google.com/youtube/v3/docs/search/list
     Enregistrement utilise pafy, en partant de l'URL de base https://www.youtube.com/watch?v= + le video ID récupéré via l'API
         => Doc Pafy : https://pypi.org/project/pafy/
+
+# TODO :
+    Séparer les threads, l'un qui lis la musique et l'autre qui l'enregistre
+
+# TODO :                Member'
+    1mn de son ~= 0.75mo
+    Un disque dur de 1TO permet de stocker ~= 22 000h de musique
+    Cout du hdd : 50€
