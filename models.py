@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import os
 import youtube_dl
+import pprint
 
 class ExternalMusic():
     def __init__(self, name, channel, id):
@@ -24,7 +25,7 @@ class ExternalMusic():
 
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': 'music/%(title)s.%(ext)s',
+            'outtmpl': 'music/pending.%(ext)s',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -34,4 +35,4 @@ class ExternalMusic():
             'progress_hooks': [my_hook],
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([self.yt_url])
+            youtube = ydl.download([self.yt_url])

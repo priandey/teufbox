@@ -1,11 +1,4 @@
-# TODO :
-    Moteur de recherche utilise l'api google
-        => Doc Api Youtube Search : https://developers.google.com/youtube/v3/docs/search/list
-    Enregistrement utilise pafy, en partant de l'URL de base https://www.youtube.com/watch?v= + le video ID récupéré via l'API
-        => Doc Pafy : https://pypi.org/project/pafy/
-
-# TODO :
-    Séparer les threads, l'un qui lis la musique et l'autre qui l'enregistre
+# TODO : Récupérer les données de la musique depuis les metadata si possible, puis proposer à l'utilisateur une édition avant l'enregistrement de l'objet
 
 # TODO :                Member'
     1mn de son ~= 0.75mo
@@ -13,5 +6,3 @@
     Cout du hdd : 50€
     10mn music : 30sec
     60mn music : 169sec (2m49s)
-
-# TODO : Fonction pour réitérer la recherche

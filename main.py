@@ -18,7 +18,7 @@ def search_engine(keep_going, youtube, keywords):
             q=keywords
         )
         response = request.execute()
-        # pprint.pprint(response)
+        pprint.pprint(response)
         response_list = []
         position = 0
         for proposition in response['items']:

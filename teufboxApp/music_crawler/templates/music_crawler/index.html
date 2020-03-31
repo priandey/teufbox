@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="{% url 'search_song' %}" method="get">
+        <input type="text" name="keywords" id="keywords" />
+        <input type="submit" value="submit" />
+    </form>
+    {% for proposition in response_list %}
+        <div class="proposition" style="border: 1px solid black">
+            <img src="{{ proposition.thumbnail }}"><p>{{ proposition.name }} by {{ proposition.channel }}</p>
+            <a href="https://www.youtube.com/watch?v={{ proposition.id }}"> Direct link</a>
+            <form action="{% url 'register_song' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="{{ proposition.name }}" />
+                <input type="hidden" name="artist" value="{{ proposition.channel }}" />
+                <input type="hidden" name="thumbnail" value="{{ proposition.thumbnail }}" />
+                <input type="hidden" name="id" value="{{ proposition.id }}" />
+                <input type="submit" value="Enregistrer cette musique">
+            </form>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
