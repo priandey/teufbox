@@ -1,6 +1,31 @@
+# TODO : Système de recherche au sein de la DB
+
+
 # TODO : Récupérer les données de la musique depuis les metadata si possible, puis proposer à l'utilisateur une édition avant l'enregistrement de l'objet
+        Les tags sont bien conservés grâce à l'utilisation de EasyID3. Reste le système d'inscription de tags
+
+    Problèmes :  [x] Le système actuel passe par une réécriture du fichier, qui ne prends pas en compte les métadonnées MP3.
+                    Ces métadonnées sont présentes dans le fichier initial, et cette perte est un appauvrissement.
+
+                 [] Avant de valider les données, proposer une édition à l'utilisateur.
+
+    Fonctionnement actuel du système :
+
+        Téléchargement de la musique (YTDL) => Conversion de la musique (FFMPEG) => Enregistrement en DB (Django) => Réécriture du fichier audio dans le media root (Django : Method de modèle)
+
+    Solutions : [x] Enregistrer via YTDL directement dans le MEDIA ROOT, puis pointer le media vers le fichier.
+                    Django ne permet pas cette solution nativement. Ou alors en passant par la modification du système de stockage.
+
+                [X] Conserver les métadonnées et les transmettre à la méthode du modèle pour les réinsérer dans le fichier.
+
+# TODO :                Idées de fonctionnalitées
+
+        [] Proposer un outil d'exportation qui permet de faire un "pack" de son choisis
+           (potentiellement tous). Une commande qui exporte les fichiers dans une archive et les envois dans l'espace de stockage
+            selectionné.
 
 # TODO :                Member'
+
     1mn de son ~= 0.75mo
     Un disque dur de 1TO permet de stocker ~= 22 000h de musique
     Cout du hdd : 50€

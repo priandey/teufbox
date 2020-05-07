@@ -52,4 +52,5 @@ def register_song(request):
             cover=request.POST['thumbnail']
         )
         new_music.get_music_from_file()
+        new_music.set_mp3_tags()
         return redirect('index')
