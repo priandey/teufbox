@@ -25,11 +25,13 @@ def search_song(request):
     keywords = request.GET['keywords']
     yt_request = youtube.search().list(
         part="snippet",
-        maxResults=10,
+        maxResults=30,
         q=keywords
     )
     response = yt_request.execute()
     response_list = []
+    for keyword in keywords.split(" "):
+        pass
     for proposition in response['items']:
         try:
             prop = {'name': proposition['snippet']['title'],
