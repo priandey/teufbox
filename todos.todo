@@ -1,7 +1,7 @@
 # TODO : Système de recherche au sein de la DB
 # TODO : Encapsuler les erreurs de YDL + L'output du dl et de la conversion pour l'afficher
 
-        Penser à un bouton réessayer en cas d'erreur
+        Passage de la requête en AJAX via le front end. Ajout d'un visuel de progression et retour des erreurs.
 
 
 # TODO : Récupérer les données de la musique depuis les metadata si possible, puis proposer à l'utilisateur une édition avant l'enregistrement de l'objet

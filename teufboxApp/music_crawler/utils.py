@@ -1,3 +1,4 @@
+import subprocess
 import youtube_dl
 from tinytag import TinyTag
 from datetime import timedelta
@@ -8,9 +9,14 @@ def download_from_youtube(yt_id):
     :param yt_id : Youtube id of the video you need to download
     :return :  Return a serie of Tags in order to
     """
+    subprocess.run(['youtube-dl', '--rm-cache-dir'])
     def my_hook(d):
+        if d['status'] == 'downloading':
+            pass
         if d['status'] == 'finished':
-            print('Done downloading, now converting ...')
+            pass
+        if d['status'] == 'error':
+            pass
 
     yt_url = f'https://www.youtube.com/watch?v={yt_id}'
 
