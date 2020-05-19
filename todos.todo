@@ -1,25 +1,7 @@
 # TODO : Système de recherche au sein de la DB
-# TODO : Encapsuler les erreurs de YDL + L'output du dl et de la conversion pour l'afficher
+# TODO : Refonte graphique pour le plaisir
 
-        Passage de la requête en AJAX via le front end. Ajout d'un visuel de progression et retour des erreurs.
-
-
-# TODO : Récupérer les données de la musique depuis les metadata si possible, puis proposer à l'utilisateur une édition avant l'enregistrement de l'objet
-        Les tags sont bien conservés grâce à l'utilisation de EasyID3. Reste le système d'inscription de tags
-
-    Problèmes :  [x] Le système actuel passe par une réécriture du fichier, qui ne prends pas en compte les métadonnées MP3.
-                    Ces métadonnées sont présentes dans le fichier initial, et cette perte est un appauvrissement.
-
-                 [] Avant de valider les données, proposer une édition à l'utilisateur.
-
-    Fonctionnement actuel du système :
-
-        Téléchargement de la musique (YTDL) => Conversion de la musique (FFMPEG) => Enregistrement en DB (Django) => Réécriture du fichier audio dans le media root (Django : Method de modèle)
-
-    Solutions : [x] Enregistrer via YTDL directement dans le MEDIA ROOT, puis pointer le media vers le fichier.
-                    Django ne permet pas cette solution nativement. Ou alors en passant par la modification du système de stockage.
-
-                [X] Conserver les métadonnées et les transmettre à la méthode du modèle pour les réinsérer dans le fichier.
+        Organisation en deux espaces pour commencer : Un espace de recherche, et un espace de mise en attente de musique pour le téléchargement.
 
 # TODO :                Idées de fonctionnalitées
 

@@ -11,6 +11,7 @@ class Music(models.Model):
     duration = models.DurationField(null=True)
     cover = models.URLField(blank=True)
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='songs', null=True)
+    yt_id = models.CharField(max_length=100)
     media = models.FileField(upload_to='music/', blank=True)  # Idem
 
     def __str__(self):
@@ -39,3 +40,17 @@ class Artist(models.Model):
 
     def __str__(self):
         return self.name
+
+class DownloadCount(models.Model):
+    count = models.IntegerField(default=1)
+
+class CachedMusic(models.Model):
+    title = models.CharField(max_length=255)
+    yt_id = models.CharField(max_length=100, null=True, unique=False)
+
+    @property
+    def is_local(self):
+        if len(Music.objects.filter(yt_id=self.yt_id)) > 0:
+            return True
+        else:
+            return False

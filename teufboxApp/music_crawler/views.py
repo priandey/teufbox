@@ -5,9 +5,10 @@ import googleapiclient.errors
 
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from youtube_dl.utils import DownloadError
 
-from .models import Music, Artist
+from .models import Music, Artist, CachedMusic
 from .utils import download_from_youtube
 
 
@@ -42,7 +43,7 @@ def search_song(request):
             prop = {'name': proposition['snippet']['title'],
                     'channel': proposition['snippet']['channelTitle'],
                     'id': proposition['id']['videoId'],
-                    'thumbnail': proposition['snippet']['thumbnails']['medium']['url']}
+                    'thumbnail': proposition['snippet']['thumbnails']['default']['url']}
             response_list.append(prop)
         except KeyError:
             pass
@@ -59,6 +60,7 @@ def register_song(request):
                 title=music_tags['title'],
                 duration=music_tags['duration'],
                 artist=music_artist[0],
+                yt_id=request.POST['id'],
                 cover=request.POST['thumbnail']
             )
             new_music.get_music_from_file()
@@ -69,3 +71,31 @@ def register_song(request):
             response['status'] = str(err) + " -- Vous pouvez réessayer"
             response['error'] = True
         return JsonResponse(response)
+
+@csrf_exempt
+def music_cache(request):
+    if request.method == "GET":
+        if request.GET['music'] == 'all':
+            music_cached = CachedMusic.objects.all()
+            serialized_cache = []
+            if music_cached:
+                for music in music_cached:
+                    serialized_cache.append({
+                        'title': music.title,
+                        'yt_id': music.yt_id,
+                        'is_local': music.is_local
+                    })
+
+            return JsonResponse(serialized_cache, safe=False)
+
+    if request.method == "POST":
+        add_to_cache = CachedMusic.objects.create(
+                title=request.POST['title'],
+                yt_id=request.POST['id']
+        )
+        add_to_cache.save()
+        return JsonResponse({"status":"Added music to catch"})
+
+    if request.method == "DELETE":
+        CachedMusic.objects.get(yt_id=request.GET['id']).delete()
+        return JsonResponse({"status": "Deleted music to catch"})

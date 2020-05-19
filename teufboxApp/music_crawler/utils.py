@@ -2,6 +2,7 @@ import subprocess
 import youtube_dl
 from tinytag import TinyTag
 from datetime import timedelta
+from .models import DownloadCount
 
 def download_from_youtube(yt_id):
     """
@@ -9,7 +10,12 @@ def download_from_youtube(yt_id):
     :param yt_id : Youtube id of the video you need to download
     :return :  Return a serie of Tags in order to
     """
-    subprocess.run(['youtube-dl', '--rm-cache-dir'])
+    download_count = DownloadCount.objects.get_or_create(pk=1)[0]
+    download_count.count += 1
+    download_count.save()
+    print("Nombre de download = " + str(download_count.count))
+    if download_count.count % 10 == 0:
+        subprocess.run(['youtube-dl', '--rm-cache-dir'])
     def my_hook(d):
         if d['status'] == 'downloading':
             pass
