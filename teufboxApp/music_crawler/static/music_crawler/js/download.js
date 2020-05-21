@@ -17,7 +17,7 @@ $('input.downloadButton').click(function(event){
     var buttonId = this.id
     var progressBar = this.parentElement.nextSibling;
     progressBar.hidden = false;
-    myApp.musicList.push({
+    musicCache.musicList.push({
        'title': formData['title'],
         'yt_id': formData['id'],
         'is_local': false,
@@ -32,13 +32,14 @@ $('input.downloadButton').click(function(event){
 
 });
 
-/* TODO : Télécharger récursivement les items de musiclist s'ils ne sont pas déjà présents en local. */
-let myApp = new Vue(
+/* TODO : Télécharger récursivement les items de musiclist s'ils ne sont pas déjà présent en local. */
+let musicCache = new Vue(
 {
     el: '#musicCache',
     delimiters: ['<<<', '>>>'],
     data: {
         musicList: new Array(),
+        is_downloading: false,
     },
     mounted () {
         /* Get all music cache  */
@@ -46,7 +47,7 @@ let myApp = new Vue(
             .get('/music_cache?music=all')
             .then(response => (
                 response.data.forEach(function (item){
-                    myApp.musicList.push(item);
+                    musicCache.musicList.push(item);
                 })
                 )
             )
@@ -54,8 +55,8 @@ let myApp = new Vue(
     methods: {
         deleteItem: function(index) {
             axios
-                .delete('/music_cache?id='+myApp.musicList[index].yt_id);
-            myApp.musicList.splice(index,1);
+                .delete('/music_cache?id='+musicCache.musicList[index].yt_id);
+            musicCache.musicList.splice(index,1);
         }
     }
 });
