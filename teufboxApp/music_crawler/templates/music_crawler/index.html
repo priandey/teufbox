@@ -7,13 +7,20 @@
     <!-- Latest compiled and minified bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <!-- Optional bootstrap theme -->
     <link rel="stylesheet" type="text/css" href="{% static 'music_crawler/css/index.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'music_crawler/css/favicon.png' %}"/>
 </head>
 <body>
     <div class="container">
         <div class="row d-flex justify-content-left align-items-center">
-            <h1 class="col-md-4">TeufBox</h1>
+            <h1 class="col-md-4" hidden>TeufBox</h1>
+            <img src="{% static 'music_crawler/css/logo.png' %}" class="col-md-4"/>
+            <div class="col-md-8 mediaPlayer">
+                <div class="row">
+                    <audio id="demo" src="sample.mp3" crossorigin="anonymous"></audio>
+                </div>
+            </div>
         </div>
-        <div class="row">
+        <div class="row mainArea">
             <div class="search-result col-md-8 order md-1 order-sm-2" id="SearchYoutube">
                 <div class="row justify-content-center">
                     <form action="" method="get" class="col-md-12 justify-content-around" v-on:submit.prevent="getResult">
@@ -35,14 +42,14 @@
             </div>
             <div class="downloadList col-md-4 order-md-2 order-sm-1" id="musicCache">
                 <div class="row justify-content-center">
-                    <h2 class="col-md-12 underlinedTitle">File d'attente</h2>
-                    <button class="col-md-12" v-on:click="downloadAll">Télécharger tout</button>
-                    <button class="col-md-12" v-on:click="emptyCache">Vider la file</button>
+                    <h2 class="col-md-9 underlinedTitle">File d'attente</h2>
+                    <button class="col-md-12 buttonPrimary" v-on:click="downloadAll">Tout télécharger</button>
+                    <button class="col-md-12 buttonPrimary" v-on:click="emptyCache">Vider la file</button>
                 </div>
                 <div class="col-md-12 musicCached" v-for="(music, index) in musicList"> <!-- TODO : Formater correctement les music en cache -->
                     <strong><<< music.title >>> </strong>
-                    <p><button v-on:click="deleteItem(index)">Retirer</button>
-                        <button v-if="music.is_downloading === false && music.is_local===false" v-on:click="download(music)">Télécharger</button>
+                    <p><button v-on:click="deleteItem(index)" class="buttonPrimary">Supprimer</button>
+                        <button v-if="music.is_downloading === false && music.is_local===false" v-on:click="download(music)" class="buttonPrimary">Télécharger</button>
                         <img v-else-if="music.is_downloading && music.is_local===false" src="{% static 'music_crawler/js/progress-bar.gif' %}" />
                         <span v-else>Téléchargementt effectué</span></p>
                     <p>Dans la teufbox  <i v-if="music.is_local" class="far fa-2x fa-check-circle" style="color:green"></i>

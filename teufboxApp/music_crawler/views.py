@@ -54,6 +54,12 @@ def register_song(request):
     if request.method == "POST":
         response = {"status": "Downloading",
                     "error": False}
+        # TODO : Maybe "CachedMusic" is not such a good name for this model...
+        update_status = CachedMusic.objects.get(yt_id=request.POST['id'])
+        update_status.is_downloading = True
+        print("DOWNLOADING : "+str(update_status))
+        update_status.save()
+
         try:
             music_tags = download_from_youtube(request.POST['id'])
             music_artist = Artist.objects.get_or_create(name=music_tags['artist'])
@@ -86,7 +92,7 @@ def music_cache(request):
                         'yt_id': music.yt_id,
                         'thumbnail': music.thumbnail,
                         'is_local': music.is_local,
-                        'is_downloading': False
+                        'is_downloading': music.is_downloading
                     })
 
             return JsonResponse(serialized_cache, safe=False)

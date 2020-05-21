@@ -48,6 +48,7 @@ class CachedMusic(models.Model):
     title = models.CharField(max_length=255)
     yt_id = models.CharField(max_length=100, null=True, unique=True)
     thumbnail = models.URLField(blank=True)
+    is_downloading = models.BooleanField(default=False)
 
     @property
     def is_local(self):

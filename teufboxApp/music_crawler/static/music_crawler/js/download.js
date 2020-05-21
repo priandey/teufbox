@@ -43,6 +43,7 @@ let searchYoutube = new Vue({
     },
     methods: {
         getResult: function() {
+            musicCache.refreshList();
             let output = searchYoutube.resultList;
             searchYoutube.searching = true;
             output.splice(0, output.length);
@@ -55,7 +56,7 @@ let searchYoutube = new Vue({
                     })
                 })
         },
-        addToCache: function(music) { /* TODO : Forbid adding more than once yt_id in the list */
+        addToCache: function(music) { /* TODO : Forbid adding more than once yt_id in the list properly (handle server error)*/
             console.log(music);
             $.post('/music_cache', {
                 title: music.name,
@@ -63,12 +64,13 @@ let searchYoutube = new Vue({
                 thumbnail: music.thumbnail
             }, function(data) {
                 musicCache.refreshList();
+                print(data.getAllResponseHeaders())
             })
         }
     }
 });
 
-/* TODO : Télécharger récursivement les items de musiclist s'ils ne sont pas déjà présent en local. */
+/* TODO : Amélioration du téléchargement pour éviter la simultanéité : await ? */
 let musicCache = new Vue(
 {
     el: '#musicCache',
@@ -115,14 +117,13 @@ let musicCache = new Vue(
                     thumbnail: music.thumbnail
                 };
                 $.post("/register_song", params, function (data) {
-                    console.log(data);
-                    music.is_local = true;
-                    music.is_downloading = false;
+                    musicCache.refreshList()
                 })
             }
-        }, downloadAll: function() {
+        },
+
+        downloadAll: function() {
             /* Download all the elements on the list, and flag them as downloaded and local */
-            musicCache.is_downloading = true;
             musicCache.musicList.forEach(function(music) {
                 musicCache.download(music);
             });
