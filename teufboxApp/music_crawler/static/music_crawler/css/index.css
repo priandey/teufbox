@@ -1,10 +1,18 @@
 body {
-    background-color: rgba(0, 84, 255, 0.73);
+    background-image: url("background.webp");
+    color: white;
 }
 
 .proposition {
-    border : 1px solid rgba(128, 128, 128, 0.53);
     margin: 5px 5px;
+}
+
+.search-result {
+    background-color: rgba(128, 128, 128, 0.71);
+}
+
+.musicCached {
+    border: 2px solid black;
 }
 
 .notification {
@@ -12,15 +20,24 @@ body {
 }
 
 .downloadList {
-    border-left: 2px dashed darkblue;
+    background-color: rgba(128, 128, 128, 0.71);
 }
 
 .underlinedTitle {
-    border-bottom: 2px dashed darkblue;
 }
 
 #keywords {
     text-align: center;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid #2f2f2f;
+    color: whitesmoke;
+    font-weight: bold;
+}
+
+#keywords::placeholder {
+    color: whitesmoke;
+    font-weight: bold;
 }
 
 #submitButton {

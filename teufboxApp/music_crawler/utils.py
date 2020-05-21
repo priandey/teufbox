@@ -28,7 +28,7 @@ def download_from_youtube(yt_id):
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': 'music_crawler/music/pending.%(ext)s',
+        'outtmpl': f'music_crawler/music/{yt_id}.%(ext)s',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -41,7 +41,7 @@ def download_from_youtube(yt_id):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([yt_url])
 
-    music_tags = TinyTag.get('music_crawler/music/pending.mp3')
+    music_tags = TinyTag.get(f'music_crawler/music/{yt_id}.mp3')
     print(music_tags)
     tags = {
         'title': music_tags.title,

@@ -18,9 +18,10 @@ $('input.downloadButton').click(function(event){
     var progressBar = this.parentElement.nextSibling;
     progressBar.hidden = false;
     musicCache.musicList.push({
-       'title': formData['title'],
+        'title': formData['title'],
         'yt_id': formData['id'],
         'is_local': false,
+        'formData':formData
     });
     $.post('/music_cache', formData, function(data) {
         progressBar.hidden = true;
@@ -32,6 +33,41 @@ $('input.downloadButton').click(function(event){
 
 });
 
+let searchYoutube = new Vue({
+    el: '#SearchYoutube',
+    delimiters: ['<<<', '>>>'],
+    data: {
+        resultList : new Array(),
+        keywords: new String(),
+        searching: false,
+    },
+    methods: {
+        getResult: function() {
+            let output = searchYoutube.resultList;
+            searchYoutube.searching = true;
+            output.splice(0, output.length);
+            axios
+                .get('/search_song?keywords='+searchYoutube.keywords)
+                .then(function(response) {
+                    searchYoutube.searching = false;
+                    response.data.forEach(function (item) {
+                        output.push(item);
+                    })
+                })
+        },
+        addToCache: function(music) { /* TODO : Forbid adding more than once yt_id in the list */
+            console.log(music);
+            $.post('/music_cache', {
+                title: music.name,
+                id: music.id,
+                thumbnail: music.thumbnail
+            }, function(data) {
+                musicCache.refreshList();
+            })
+        }
+    }
+});
+
 /* TODO : Télécharger récursivement les items de musiclist s'ils ne sont pas déjà présent en local. */
 let musicCache = new Vue(
 {
@@ -39,24 +75,57 @@ let musicCache = new Vue(
     delimiters: ['<<<', '>>>'],
     data: {
         musicList: new Array(),
-        is_downloading: false,
     },
     mounted () {
-        /* Get all music cache  */
-        axios
-            .get('/music_cache?music=all')
-            .then(response => (
-                response.data.forEach(function (item){
-                    musicCache.musicList.push(item);
-                })
-                )
-            )
+        this.refreshList()
     },
     methods: {
+
         deleteItem: function(index) {
             axios
                 .delete('/music_cache?id='+musicCache.musicList[index].yt_id);
             musicCache.musicList.splice(index,1);
-        }
+        },
+
+        emptyCache: function() {
+            /* Empty the music cache both on front and back end */
+            musicCache.musicList.forEach(function(item, index) {
+                musicCache.deleteItem(index)
+            })
+        },
+
+        refreshList: function() {
+            /* Refresh music cache with backend data */
+            this.musicList.splice(0, this.musicList.length);
+            axios
+                .get('/music_cache?music=all')
+                .then(response => (
+                        response.data.forEach(function (item){
+                            musicCache.musicList.push(item);
+                        })
+                    )
+                )
+        },
+
+        download: function (music) {
+            if (music.is_local === false) {
+                music.is_downloading = true;
+                let params = {
+                    id: music.yt_id,
+                    thumbnail: music.thumbnail
+                };
+                $.post("/register_song", params, function (data) {
+                    console.log(data);
+                    music.is_local = true;
+                    music.is_downloading = false;
+                })
+            }
+        }, downloadAll: function() {
+            /* Download all the elements on the list, and flag them as downloaded and local */
+            musicCache.is_downloading = true;
+            musicCache.musicList.forEach(function(music) {
+                musicCache.download(music);
+            });
+        },
     }
 });

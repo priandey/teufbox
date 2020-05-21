@@ -47,8 +47,9 @@ def search_song(request):
             response_list.append(prop)
         except KeyError:
             pass
-    return render(request, 'music_crawler/index.html', {'response_list': response_list})
+    return JsonResponse(response_list, safe=False)
 
+@csrf_exempt
 def register_song(request):
     if request.method == "POST":
         response = {"status": "Downloading",
@@ -83,7 +84,9 @@ def music_cache(request):
                     serialized_cache.append({
                         'title': music.title,
                         'yt_id': music.yt_id,
-                        'is_local': music.is_local
+                        'thumbnail': music.thumbnail,
+                        'is_local': music.is_local,
+                        'is_downloading': False
                     })
 
             return JsonResponse(serialized_cache, safe=False)
@@ -91,11 +94,12 @@ def music_cache(request):
     if request.method == "POST":
         add_to_cache = CachedMusic.objects.create(
                 title=request.POST['title'],
-                yt_id=request.POST['id']
+                yt_id=request.POST['id'],
+                thumbnail=request.POST['thumbnail']
         )
         add_to_cache.save()
-        return JsonResponse({"status":"Added music to catch"})
+        return JsonResponse({"status":"Added music to cache"})
 
     if request.method == "DELETE":
-        CachedMusic.objects.get(yt_id=request.GET['id']).delete()
+        CachedMusic.objects.filter(yt_id=request.GET['id'])[0].delete()
         return JsonResponse({"status": "Deleted music to catch"})

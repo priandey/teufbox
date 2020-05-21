@@ -22,7 +22,7 @@ class Music(models.Model):
         Retrieve music from its downloaded location to store it in media root, then get rid of original file
         """
         path_to_media_file = os.path.join(MEDIA_ROOT, f'{self.title}.mp3')
-        with open(os.path.join(os.getcwd(), 'music_crawler/music/pending.mp3'), "rb") as fh:
+        with open(os.path.join(os.getcwd(), f'music_crawler/music/{self.yt_id}.mp3'), "rb") as fh:
             with ContentFile(fh.read()) as file_content:
                 self.media.save(path_to_media_file, file_content)
                 self.save()
@@ -46,7 +46,8 @@ class DownloadCount(models.Model):
 
 class CachedMusic(models.Model):
     title = models.CharField(max_length=255)
-    yt_id = models.CharField(max_length=100, null=True, unique=False)
+    yt_id = models.CharField(max_length=100, null=True, unique=True)
+    thumbnail = models.URLField(blank=True)
 
     @property
     def is_local(self):
