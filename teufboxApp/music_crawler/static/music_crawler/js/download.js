@@ -61,9 +61,15 @@ let searchYoutube = new Vue({
                 .then(function(response) {
                     searchYoutube.searching = false;
                     response.data.forEach(function (item) {
-                        item.name = parse_unicode_in_string(item.name)
-                        output.push(item);
-                    })
+                        item.name = parse_unicode_in_string(item.name);
+                        if (item.is_local === true) {
+                            output.splice(0, 0, item)
+                        } else {
+                            output.push(item);
+                        }
+
+                    });
+                    console.log(searchYoutube.resultList)
                 })
         },
         addToCache: function(music) { /* TODO : Forbid adding more than once yt_id in the list properly (handle server error)*/

@@ -32,7 +32,8 @@
                             <div class="row">
                                 <img v-bind:src="result.thumbnail" class="col-md-4 d-inline">
                                 <div class="col-md-6">
-                                    <p class="col-md-12"><<< result.name >>> by <<< result.channel >>></p>
+                                    <p v-if="result.is_local" style="color:greenyellow"> <<< result.name >>></p>
+                                    <p v-else class="col-md-12"><<< result.name >>> by <<< result.channel >>></p>
                                     <button class="buttonPrimary" v-on:click="addToCache(result)">Ajouter à la liste</button>
                                 </div>
                             </div>
