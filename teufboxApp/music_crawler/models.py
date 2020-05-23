@@ -11,8 +11,9 @@ class Music(models.Model):
     duration = models.DurationField(null=True)
     cover = models.URLField(blank=True)
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='songs', null=True)
+    album = models.CharField(max_length=255, default="None")
     yt_id = models.CharField(max_length=100)
-    media = models.FileField(upload_to='music/', blank=True)  # Idem
+    media = models.FileField(upload_to='music/', blank=True)
 
     def __str__(self):
         return self.title

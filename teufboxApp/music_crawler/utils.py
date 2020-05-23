@@ -1,4 +1,5 @@
 import subprocess
+import pprint
 
 from datetime import timedelta
 
@@ -21,8 +22,10 @@ def download_from_youtube(yt_id):
     download_count.count += 1
     download_count.save()
     print("Nombre de download = " + str(download_count.count))
-    if download_count.count % 10 == 0:
+
+    if download_count.count % 10 == 0:  # Empty cache directory frequently, as it caused errors in the past
         subprocess.run(['youtube-dl', '--rm-cache-dir'])
+
     def my_hook(d):
         if d['status'] == 'downloading':
             pass
@@ -49,11 +52,11 @@ def download_from_youtube(yt_id):
         ydl.download([yt_url])
 
     music_tags = TinyTag.get(f'music_crawler/music/{yt_id}.mp3')
-    print(music_tags)
     tags = {
         'title': music_tags.title,
         'duration': timedelta(seconds=music_tags.duration),
-        'artist': music_tags.artist
+        'artist': music_tags.artist,
+        'album': music_tags.album
     }
     return tags
 
@@ -65,6 +68,7 @@ def download_one_song(music, response):
             title=music_tags['title'],
             duration=music_tags['duration'],
             artist=music_artist[0],
+            album=music_tags['album'],
             yt_id=music['id'],
             cover=music['thumbnail']
         )

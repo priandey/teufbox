@@ -1,5 +1,8 @@
 # TODO : Système de recherche au sein de la DB
-    dummy change for testing commit message
+
+     - Sur quelle données peut-on chercher ? : { - L'artiste
+                                                 - Le titre de la musique
+                                                 - }
 
 # TODO : Refonte graphique pour le plaisir
 

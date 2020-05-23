@@ -18,16 +18,12 @@ def index(request):
 def search_song(request):
     scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
     api_service_name = "youtube"
     api_version = "v3"
     DEVELOPER_KEY = os.getenv("GOOGLE_KEY")
-
     youtube = googleapiclient.discovery.build(api_service_name,
                                               api_version,
                                               developerKey=DEVELOPER_KEY)
-
-    # Now that api is authenticated, start process
     keywords = request.GET['keywords']
     yt_request = youtube.search().list(
         part="snippet",
@@ -36,17 +32,25 @@ def search_song(request):
     )
     response = yt_request.execute()
     response_list = []
-    for keyword in keywords.split(" "):
-        pass
     for proposition in response['items']:
         try:
             prop = {'name': proposition['snippet']['title'],
                     'channel': proposition['snippet']['channelTitle'],
                     'id': proposition['id']['videoId'],
-                    'thumbnail': proposition['snippet']['thumbnails']['default']['url']}
+                    'thumbnail': proposition['snippet']['thumbnails']['default']['url'],
+                    'is_local': False}
+            search_db = Music.objects.filter(yt_id=prop['id'])
+
+            if search_db:
+                prop['name'] = search_db[0].title
+                prop['channel'] = "TeufBox"
+                prop['thumbnail'] = search_db[0].cover
+                prop['is_local'] = True
+
             response_list.append(prop)
         except KeyError:
             pass
+
     return JsonResponse(response_list, safe=False)
 
 @csrf_exempt
@@ -67,6 +71,11 @@ def downloader(request):
                 thumbnail: string | url of thumbnail picture
     :return:
     """
+    def set_to_downloading(music):
+        update_status = CachedMusic.objects.get(yt_id=music['id'])
+        update_status.is_downloading = True
+        update_status.save()
+
     if request.method == "POST":
         response = {"status": "Downloading",
                     "error": False}
@@ -83,12 +92,6 @@ def downloader(request):
         else:
             response = "Wrong instructions"
         return JsonResponse(response)
-
-
-def set_to_downloading(music):
-    update_status = CachedMusic.objects.get(yt_id=music['id'])
-    update_status.is_downloading = True
-    update_status.save()
 
 
 @csrf_exempt

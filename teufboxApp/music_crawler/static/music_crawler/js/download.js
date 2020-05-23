@@ -6,7 +6,7 @@ function parse_unicode_in_string(to_parse) {
     let parser = new DOMParser;
 
     let parsed_result = parser.parseFromString(to_parse, "text/html");
-    let to_return = new String(parsed_result.body.innerText);
+    let to_return = parsed_result.body.innerText;
 
     return to_return
 
