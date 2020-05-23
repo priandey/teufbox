@@ -1,4 +1,5 @@
 import os
+import json
 
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -6,14 +7,13 @@ import googleapiclient.errors
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from youtube_dl.utils import DownloadError
 
 from .models import Music, Artist, CachedMusic
-from .utils import download_from_youtube
-
+from .utils import download_one_song
 
 def index(request):
     return render(request, 'music_crawler/index.html', locals())
+
 
 def search_song(request):
     scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -50,34 +50,46 @@ def search_song(request):
     return JsonResponse(response_list, safe=False)
 
 @csrf_exempt
-def register_song(request):
+def downloader(request):
+    """
+    The downloader is an interface between front-end query for downloading and back-end downloading processes
+
+    :param request:
+
+        request.body should be json.stringify type and contain at least 2 arguments :
+            multiple : Boolean | Represent if the downloader contain one or more songs to download
+
+            if multiple is true :
+                download_queue : List of json : { yt_id : string | id of youtube video
+                                                  thumbnail: string | url of thumbnail picture }
+            if multiple is false :
+                yt_id : string | id of youtube video
+                thumbnail: string | url of thumbnail picture
+    :return:
+    """
     if request.method == "POST":
         response = {"status": "Downloading",
                     "error": False}
-        # TODO : Maybe "CachedMusic" is not such a good name for this model...
-        update_status = CachedMusic.objects.get(yt_id=request.POST['id'])
-        update_status.is_downloading = True
-        print("DOWNLOADING : "+str(update_status))
-        update_status.save()
-
-        try:
-            music_tags = download_from_youtube(request.POST['id'])
-            music_artist = Artist.objects.get_or_create(name=music_tags['artist'])
-            new_music = Music.objects.create(
-                title=music_tags['title'],
-                duration=music_tags['duration'],
-                artist=music_artist[0],
-                yt_id=request.POST['id'],
-                cover=request.POST['thumbnail']
-            )
-            new_music.get_music_from_file()
-            new_music.set_mp3_tags()
-            response['status'] = 'Téléchargement effectué'
-
-        except DownloadError as err:
-            response['status'] = str(err) + " -- Vous pouvez réessayer"
-            response['error'] = True
+        raw_data = request.body.decode('utf-8')
+        data = json.loads(raw_data)
+        if not data["multiple"]:
+            set_to_downloading(data["music"])
+            download_one_song(data['music'], response)
+        elif data["multiple"]:
+            for music in data["download_queue"]:  # Setting all music flag to "downloading"
+                set_to_downloading(music)
+            for music in data["download_queue"]:
+                download_one_song(music, response)
+        else:
+            response = "Wrong instructions"
         return JsonResponse(response)
+
+
+def set_to_downloading(music):
+    update_status = CachedMusic.objects.get(yt_id=music['id'])
+    update_status.is_downloading = True
+    update_status.save()
+
 
 @csrf_exempt
 def music_cache(request):
@@ -104,8 +116,12 @@ def music_cache(request):
                 thumbnail=request.POST['thumbnail']
         )
         add_to_cache.save()
-        return JsonResponse({"status":"Added music to cache"})
+        return JsonResponse({"status" : "Added music to cache"})
 
     if request.method == "DELETE":
-        CachedMusic.objects.filter(yt_id=request.GET['id'])[0].delete()
-        return JsonResponse({"status": "Deleted music to catch"})
+        if request.GET['id'] == "all":
+            CachedMusic.objects.all().delete()
+        else:
+            CachedMusic.objects.filter(yt_id=request.GET['id'])[0].delete()
+
+        return JsonResponse({"status": "Deleted music from cache"})

@@ -16,7 +16,6 @@
             <img src="{% static 'music_crawler/css/logo.png' %}" class="col-md-4"/>
             <div class="col-md-8 mediaPlayer">
                 <div class="row">
-                    <audio id="demo" src="sample.mp3" crossorigin="anonymous"></audio>
                 </div>
             </div>
         </div>
@@ -24,7 +23,7 @@
             <div class="search-result col-md-8 order md-1 order-sm-2" id="SearchYoutube">
                 <div class="row justify-content-center">
                     <form action="" method="get" class="col-md-12 justify-content-around" v-on:submit.prevent="getResult">
-                        <input type="text" name="keywords" v-model="keywords" id="keywords" class="col-md-12" placeholder="Cherchez ici une musique, un artiste, un album..."/>
+                        <input type="text" name="keywords" v-model="keywords" id="keywords" class="col-md-12" placeholder="Cherchez ici une musique, un artiste, un album..." autocomplete="off" autofocus/>
                     </form>
                         <div v-if="searching" class="col-md-4 align-self-center" style="margin-top: 40px">
                             <img src="{% static 'music_crawler/js/searching.gif' %}"/>
@@ -34,7 +33,7 @@
                                 <img v-bind:src="result.thumbnail" class="col-md-4 d-inline">
                                 <div class="col-md-6">
                                     <p class="col-md-12"><<< result.name >>> by <<< result.channel >>></p>
-                                    <button v-on:click="addToCache(result)">Ajouter à la liste</button>
+                                    <button class="buttonPrimary" v-on:click="addToCache(result)">Ajouter à la liste</button>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +41,7 @@
             </div>
             <div class="downloadList col-md-4 order-md-2 order-sm-1" id="musicCache">
                 <div class="row justify-content-center">
-                    <h2 class="col-md-9 underlinedTitle">File d'attente</h2>
+                    <h4 class="col-md-9 underlinedTitle">File d'attente</h4>
                     <button class="col-md-12 buttonPrimary" v-on:click="downloadAll">Tout télécharger</button>
                     <button class="col-md-12 buttonPrimary" v-on:click="emptyCache">Vider la file</button>
                 </div>

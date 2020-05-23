@@ -70,7 +70,6 @@ let searchYoutube = new Vue({
     }
 });
 
-/* TODO : Amélioration du téléchargement pour éviter la simultanéité : await ? */
 let musicCache = new Vue(
 {
     el: '#musicCache',
@@ -90,10 +89,11 @@ let musicCache = new Vue(
         },
 
         emptyCache: function() {
-            /* Empty the music cache both on front and back end */
-            musicCache.musicList.forEach(function(item, index) {
-                musicCache.deleteItem(index)
-            })
+            /* Empty the music cache both on front and back end*/
+
+            axios
+                .delete("music_cache?id=all");
+            musicCache.musicList = [];
         },
 
         refreshList: function() {
@@ -113,10 +113,14 @@ let musicCache = new Vue(
             if (music.is_local === false) {
                 music.is_downloading = true;
                 let params = {
-                    id: music.yt_id,
-                    thumbnail: music.thumbnail
+                    multiple: false,
+                    music: {
+                        thumbnail: music.thumbnail,
+                        id: music.yt_id,
+                    }
                 };
-                $.post("/register_song", params, function (data) {
+                params = JSON.stringify(params)
+                $.post( '/downloader', params, function (data) {
                     musicCache.refreshList()
                 })
             }
@@ -124,9 +128,30 @@ let musicCache = new Vue(
 
         downloadAll: function() {
             /* Download all the elements on the list, and flag them as downloaded and local */
+            let download_queue = new Array();
             musicCache.musicList.forEach(function(music) {
-                musicCache.download(music);
+                if (music.is_local === false) {
+                    download_queue.push({
+                        id: music.yt_id,
+                        thumbnail: music.thumbnail
+                    })
+                }
             });
+            console.log(download_queue);
+            let params = JSON.stringify({
+                multiple: true,
+                download_queue: download_queue,
+            });
+            $.post( '/downloader', params, function () {
+                musicCache.refreshList()
+            })
         },
     }
 });
+
+function autoRefresh() {
+    musicCache.refreshList();
+    setTimeout(autoRefresh, 20000);
+}
+
+autoRefresh();

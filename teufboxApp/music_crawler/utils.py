@@ -1,8 +1,15 @@
 import subprocess
-import youtube_dl
-from tinytag import TinyTag
+
 from datetime import timedelta
+
+import youtube_dl
+
+from youtube_dl.utils import DownloadError
+from tinytag import TinyTag
+
 from .models import DownloadCount
+from .models import Music, Artist
+
 
 def download_from_youtube(yt_id):
     """
@@ -49,3 +56,22 @@ def download_from_youtube(yt_id):
         'artist': music_tags.artist
     }
     return tags
+
+def download_one_song(music, response):
+    try:
+        music_tags = download_from_youtube(music['id'])
+        music_artist = Artist.objects.get_or_create(name=music_tags['artist'])
+        new_music = Music.objects.create(
+            title=music_tags['title'],
+            duration=music_tags['duration'],
+            artist=music_artist[0],
+            yt_id=music['id'],
+            cover=music['thumbnail']
+        )
+        new_music.get_music_from_file()
+        new_music.set_mp3_tags()
+        response['status'] = 'Téléchargement effectué'
+
+    except DownloadError as err:
+        response['status'] = str(err) + " -- Vous pouvez réessayer"
+        response['error'] = True
