@@ -2,6 +2,15 @@ function remove_button(button_id) {
     var element = document.getElementById(button_id);
     element.parentNode.removeChild(element);
 }
+function parse_unicode_in_string(to_parse) {
+    let parser = new DOMParser;
+
+    let parsed_result = parser.parseFromString(to_parse, "text/html");
+    let to_return = new String(parsed_result.body.innerText);
+
+    return to_return
+
+}
 
 $('input.downloadButton').click(function(event){
     event.preventDefault();
@@ -52,6 +61,7 @@ let searchYoutube = new Vue({
                 .then(function(response) {
                     searchYoutube.searching = false;
                     response.data.forEach(function (item) {
+                        item.name = parse_unicode_in_string(item.name)
                         output.push(item);
                     })
                 })
