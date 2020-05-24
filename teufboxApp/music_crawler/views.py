@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Music, Artist, CachedMusic
 from .utils import download_one_song
 
+
 def index(request):
     return render(request, 'music_crawler/index.html', locals())
 
@@ -32,6 +33,7 @@ def search_song(request):
     )
     response = yt_request.execute()
     response_list = []
+
     for proposition in response['items']:
         try:
             prop = {'name': proposition['snippet']['title'],
@@ -60,15 +62,15 @@ def downloader(request):
 
     :param request:
 
-        request.body should be json.stringify type and contain at least 2 arguments :
-            multiple : Boolean | Represent if the downloader contain one or more songs to download
+        request.body should be json.stringify type and contain 2 arguments :
+            * multiple : Boolean | Represent if the downloader contain one or more songs to download
 
-            if multiple is true :
-                download_queue : List of json : { yt_id : string | id of youtube video
+            * if multiple is true :
+                 download_queue : List of json : { yt_id : string | id of youtube video
                                                   thumbnail: string | url of thumbnail picture }
-            if multiple is false :
-                yt_id : string | id of youtube video
-                thumbnail: string | url of thumbnail picture
+            * if multiple is false :
+                music : { yt_id : string | id of youtube video
+                          thumbnail: string | url of thumbnail picture }
     :return:
     """
     def set_to_downloading(music):

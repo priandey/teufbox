@@ -80,7 +80,6 @@ let searchYoutube = new Vue({
                 thumbnail: music.thumbnail
             }, function(data) {
                 musicCache.refreshList();
-                print(data.getAllResponseHeaders())
             })
         }
     }
