@@ -64,7 +64,6 @@ def download_one_song(music, response):
     try:
         music_tags = download_from_youtube(music['id'])
         music_artist = Artist.objects.get_or_create(name=music_tags['artist'])
-	# TODO : Erreur while creating object cause album violates not null constraint
         new_music = Music.objects.create(
             title=music_tags['title'],
             duration=music_tags['duration'],

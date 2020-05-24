@@ -9,11 +9,11 @@ import os
 class Music(models.Model):
     title = models.CharField(max_length=255)
     duration = models.DurationField(null=True)
-    cover = models.URLField(blank=True)
+    cover = models.URLField(true=True)
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='songs', null=True)
-    album = models.CharField(max_length=255, default="None")
-    yt_id = models.CharField(max_length=100)
-    media = models.FileField(upload_to='music/', blank=True)
+    album = models.CharField(max_length=255, default="None", null=True)
+    yt_id = models.CharField(max_length=100, unique=True)
+    media = models.FileField(upload_to='music/', null=True)
 
     def __str__(self):
         return self.title
