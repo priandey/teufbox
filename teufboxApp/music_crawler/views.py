@@ -84,6 +84,7 @@ def downloader(request):
         raw_data = request.body.decode('utf-8')
         data = json.loads(raw_data)
         if not data["multiple"]:
+            # TODO : Add a queue for one-by-one downloading too
             set_to_downloading(data["music"])
             download_one_song(data['music'], response)
         elif data["multiple"]:
