@@ -23,13 +23,16 @@ body {
     padding: 3px 3px;
     border: none;
     border-radius : 15px 15px;
-    box-shadow: 1px 2px 3px 2px #161616;
-    color: whitesmoke;
-    background: url('button.png');
+    background-color: rgba(147, 147, 147, 0.51);
 }
 
 .buttonPrimary:active {
     box-shadow: inset 1px 1px 6px 2px #b0b0b0;
+}
+
+.buttonPrimary:hover {
+    box-shadow: inset 1px 1px 6px 2px #b0b0b0;
+    background-color: rgba(204, 204, 204, 0.51);
 }
 
 .notification {

@@ -110,7 +110,8 @@ def music_cache(request):
                         'yt_id': music.yt_id,
                         'thumbnail': music.thumbnail,
                         'is_local': music.is_local,
-                        'is_downloading': music.is_downloading
+                        'is_downloading': music.is_downloading,
+                        'url': Music.objects.get(yt_id=music.yt_id).media.url
                     })
 
             return JsonResponse(serialized_cache, safe=False)
@@ -119,7 +120,7 @@ def music_cache(request):
         add_to_cache = CachedMusic.objects.create(
                 title=request.POST['title'],
                 yt_id=request.POST['id'],
-                thumbnail=request.POST['thumbnail']
+                thumbnail=request.POST['thumbnail'],
         )
         add_to_cache.save()
         return JsonResponse({"status" : "Added music to cache"})

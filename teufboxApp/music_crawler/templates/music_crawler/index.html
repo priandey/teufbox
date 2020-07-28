@@ -16,6 +16,7 @@
             <img src="{% static 'music_crawler/css/logo.png' %}" class="col-md-4"/>
             <div class="col-md-8 mediaPlayer">
                 <div class="row">
+                    <div id="musicPlayer"><button v-show="controls.playing" v-on:click="pauseSong">Pause</button><button v-show="controls.playing===false" v-on:click="playSong">Play !</button></div>
                 </div>
             </div>
         </div>
@@ -46,8 +47,8 @@
                     <button class="col-md-12 buttonPrimary" v-on:click="downloadAll">Tout télécharger</button>
                     <button class="col-md-12 buttonPrimary" v-on:click="emptyCache">Vider la file</button>
                 </div>
-                <div class="col-md-12 musicCached" v-for="(music, index) in musicList"> <!-- TODO : Formater correctement les music en cache -->
-                    <strong><<< music.title >>> </strong>
+                <div class="col-md-12 musicCached" v-for="(music, index) in musicList"> <!-- TODO : Faire un systeme de changemet d'ordre avec input pour débuter -->
+                    <strong><input type="text" size="1" v-bind:placeholder="index"/> <<< music.title >>> </strong>
                     <p><button v-on:click="deleteItem(index)" class="buttonPrimary">Supprimer</button>
                         <button v-if="music.is_downloading === false && music.is_local===false" v-on:click="download(music)" class="buttonPrimary">Télécharger</button>
                         <img v-else-if="music.is_downloading && music.is_local===false" src="{% static 'music_crawler/js/progress-bar.gif' %}" />
@@ -65,6 +66,7 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="{% static 'music_crawler/js/download.js' %}"></script>
+        <script src="{% static 'music_crawler/js/audio-player.js' %}"></script>
     </div>
 </body>
 </html>
