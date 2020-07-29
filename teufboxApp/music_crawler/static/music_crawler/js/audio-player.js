@@ -1,6 +1,20 @@
+/* Initializing audio elements in DOM */
 let audioStream = document.createElement('audio');
-audioStream.setAttribute('v-on:ended', 'nextSong');
 
+/* Bindings audio events to vue player methods */
+audioStream.addEventListener('ended', function(){
+    musicPlayer.nextSong();
+});
+
+audioStream.ontimeupdate = function() {
+    musicPlayer.updateTime();
+};
+
+audioStream.onloadedmetadata = function () {
+    musicPlayer.setDuration();
+};
+
+/* Declaring vue element for player */
 let musicPlayer = new Vue({
     el: '#musicPlayer',
     delimiters: ['<<<', '>>>'],
@@ -8,6 +22,8 @@ let musicPlayer = new Vue({
         controls: {
             playing: false,
             audioEl: audioStream,
+            currentTimePosition: "0",
+            songDuration: "0"
         },
         playlist: {
             currentSong: {
@@ -17,6 +33,7 @@ let musicPlayer = new Vue({
             }
         }
     }, /* TODO : Find a way to link music-cache and playlist */
+
     mounted () {
         setTimeout(this.refreshSong, 500);
         setTimeout(this.loadSong, 500)
@@ -54,17 +71,31 @@ let musicPlayer = new Vue({
         },
 
         nextSong: function() {
-            let myAudio = this.controls.audioEl;
-            this.playlist.currentSong.index += 1;
-            this.loadSong();
-            this.playSong()
+            if (this.playlist.currentSong.index < musicCache.musicList.length - 1) {
+                let myAudio = this.controls.audioEl;
+                this.playlist.currentSong.index += 1;
+                this.loadSong();
+                this.controls.playing = false;
+            }
         },
 
         previousSong: function() {
-            let myAudio = this.controls.audioEl;
-            this.playlist.currentSong.index -= 1;
-            this.loadSong();
-            this.playSong()
+            if (this.playlist.currentSong.index > 0) {
+                let myAudio = this.controls.audioEl;
+                this.playlist.currentSong.index -= 1;
+                this.loadSong();
+                this.controls.playing = false;
+            }
+        },
+
+        updateTime: function() {
+            this.controls.currentTimePosition = new String(this.controls.audioEl.currentTime);
+            console.log(this.controls.currentTimePosition);
+            console.log(this.controls.songDuration)
+        },
+
+        setDuration: function() {
+            this.controls.songDuration = new String(this.controls.audioEl.duration);
         }
     }
 
