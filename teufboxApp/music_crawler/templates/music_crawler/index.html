@@ -19,7 +19,7 @@
                     <div id="musicPlayer">
                         <h2 class="col-md-12">Playing : <<< playlist.currentSong.song.title >>></h2>
                         <div class="col-md-12">
-                            <input class="col-md-12" type="range" min="0" v-bind:max="controls.songDuration" v-bind:value="controls.currentTimePosition" />
+                            <input class="col-md-12" type="range" min="0" step="0.05" v-bind:max="controls.songDuration" v-bind:value="controls.currentTimePosition" />
                             <<< controls.currentTimePosition >>> s/ <<< controls.songDuration >>> s
                         </div>
                         <button v-on:click="previousSong">Prev.</button>
