@@ -16,7 +16,13 @@
             <img src="{% static 'music_crawler/css/logo.png' %}" class="col-md-4"/>
             <div class="col-md-8 mediaPlayer">
                 <div class="row">
-                    <div id="musicPlayer"><button v-show="controls.playing" v-on:click="pauseSong">Pause</button><button v-show="controls.playing===false" v-on:click="playSong">Play !</button></div>
+                    <div id="musicPlayer">
+                        <h2>Playing : <<< playlist.currentSong.song.title >>></h2>
+                        <button v-on:click="previousSong">Prev.</button>
+                        <button v-show="controls.playing" v-on:click="pauseSong">Pause</button>
+                        <button v-show="controls.playing===false" v-on:click="playSong">Play !</button>
+                        <button v-on:click="nextSong">Next</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,7 +58,7 @@
                     <p><button v-on:click="deleteItem(index)" class="buttonPrimary">Supprimer</button>
                         <button v-if="music.is_downloading === false && music.is_local===false" v-on:click="download(music)" class="buttonPrimary">Télécharger</button>
                         <img v-else-if="music.is_downloading && music.is_local===false" src="{% static 'music_crawler/js/progress-bar.gif' %}" />
-                        <span v-else>Téléchargementt effectué</span></p>
+                        <span v-else>Téléchargement effectué</span></p>
                     <p>Dans la teufbox  <i v-if="music.is_local" class="far fa-2x fa-check-circle" style="color:green"></i>
                                         <i v-else class="fas fa-2x fa-ban" style="color:red"></i><br>
                 </div>

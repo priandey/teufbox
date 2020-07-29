@@ -92,9 +92,7 @@ let musicCache = new Vue(
     data: {
         musicList: new Array(),
     },
-    mounted () {
-        this.refreshList()
-    },
+    
     methods: {
 
         deleteItem: function(index) {

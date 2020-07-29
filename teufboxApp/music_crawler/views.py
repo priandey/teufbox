@@ -105,14 +105,23 @@ def music_cache(request):
             serialized_cache = []
             if music_cached:
                 for music in music_cached:
-                    serialized_cache.append({
-                        'title': music.title,
-                        'yt_id': music.yt_id,
-                        'thumbnail': music.thumbnail,
-                        'is_local': music.is_local,
-                        'is_downloading': music.is_downloading,
-                        'url': Music.objects.get(yt_id=music.yt_id).media.url
-                    })
+                    if not music.is_local:
+                        serialized_cache.append({
+                            'title': music.title,
+                            'yt_id': music.yt_id,
+                            'thumbnail': music.thumbnail,
+                            'is_local': music.is_local,
+                            'is_downloading': music.is_downloading,
+                        })
+                    else:
+                        serialized_cache.append({
+                            'title': music.title,
+                            'yt_id': music.yt_id,
+                            'thumbnail': music.thumbnail,
+                            'is_local': music.is_local,
+                            'is_downloading': music.is_downloading,
+                            'url': Music.objects.get(yt_id=music.yt_id).media.url
+                        })
 
             return JsonResponse(serialized_cache, safe=False)
 

@@ -51,6 +51,20 @@ let musicPlayer = new Vue({
             let myAudio = this.controls.audioEl;
             myAudio.pause();
             this.controls.playing = false;
+        },
+
+        nextSong: function() {
+            let myAudio = this.controls.audioEl;
+            this.playlist.currentSong.index += 1;
+            this.loadSong();
+            this.playSong()
+        },
+
+        previousSong: function() {
+            let myAudio = this.controls.audioEl;
+            this.playlist.currentSong.index -= 1;
+            this.loadSong();
+            this.playSong()
         }
     }
 
