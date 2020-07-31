@@ -6,11 +6,6 @@ from datetime import timedelta
 import youtube_dl
 
 from youtube_dl.utils import DownloadError
-from tinytag import TinyTag
-
-from .models import DownloadCount
-from .models import Music, Artist
-
 
 def download_from_youtube(yt_id):
     """
@@ -79,3 +74,42 @@ def download_one_song(music, response):
     except DownloadError as err:
         response['status'] = str(err) + " -- Vous pouvez réessayer"
         response['error'] = True
+
+def search_song(request):
+    scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    api_service_name = "youtube"
+    api_version = "v3"
+    DEVELOPER_KEY = os.getenv("GOOGLE_KEY")
+    youtube = googleapiclient.discovery.build(api_service_name,
+                                              api_version,
+                                              developerKey=DEVELOPER_KEY)
+    keywords = request.GET['keywords']
+    yt_request = youtube.search().list(
+        part="snippet",
+        maxResults=10,
+        q=keywords
+    )
+    response = yt_request.execute()
+    response_list = []
+
+    for proposition in response['items']:
+        try:
+            prop = {'name': proposition['snippet']['title'],
+                    'channel': proposition['snippet']['channelTitle'],
+                    'id': proposition['id']['videoId'],
+                    'thumbnail': proposition['snippet']['thumbnails']['default']['url'],
+                    'is_local': False}
+            search_db = Music.objects.filter(yt_id=prop['id'])
+
+            if search_db:
+                prop['name'] = search_db[0].title
+                prop['channel'] = "TeufBox"
+                prop['thumbnail'] = search_db[0].cover
+                prop['is_local'] = True
+
+            response_list.append(prop)
+        except KeyError:
+            pass
+
+    return JsonResponse(response_list, safe=False)
